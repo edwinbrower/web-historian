@@ -39,8 +39,6 @@ exports.readListOfUrls = function(callback) {
 };
 
 exports.isUrlInList = function(url, callback) {
-  console.log('url', url);
-  // var array = this.readListOfUrls((data) => callback(data));
   fs.readFile(this.paths.list, (err, data) => {
     if (err) {
       throw err;
@@ -63,17 +61,69 @@ exports.addUrlToList = function(url, callback) {
   // var array = this.paths.list.split('/n');
   //clean up the url so that it only contains domain name
   //we'll push the target url to the array
-   
+  // var storage = '';
+  // fs.readFile(this.paths.list, (err, data) => {
+  //   if (err) {
+  //     throw err;
+  //   }
+  //   storage = data.toString();
+  //   console.log('1', storage);
+  //   storage += url.toString();
+  //   console.log('2', storage);
+  //   done();
+  // });
+
+  // fs.writeFile(this.paths.list, storage, (err) => {
+  //   if (err) {
+  //     throw err;
+  //   }
+  //   console.log('inside writeFile', storage);
+  //   done();
+  // });
+
+  fs.appendFile(this.paths.list, url, (err) => {
+    if (err) {
+      throw err;
+    }
+    // callback(this.isUrlInList(url, _.indentity));
+    callback(true);
+    console.log('The "data to append" was appended to file!');
+  });
+
+  
+
+    // var test = this.isUrlInList(url, () => {
+
+    // });
+    // var test1 = exports.isUrlInList(url, _.identity);
+
+    // console.log('0 ', test);
+    // console.log('1 ', test1);
+    // return callback(test);
+
+    // return callback(string);
+  
 };
 
 exports.isUrlArchived = function(url, callback) {
-  fs.access(this.paths.archivedSites + url, (err, data) => {
+  // fs.access(this.paths.archivedSites + url, (err, data) => {
+  //   if (err) {
+  //     return false;
+  //   } else { 
+  //     return true; 
+  //   }
+  // });
+  var pathhh = this.paths.archivedSites + 'something';
+  fs.readFile(pathhh, (err, data) => {
     if (err) {
-      return false;
-    } else { 
-      return true; 
+      throw err;
     }
+    console.log('isUrlArchived??? ', data);
+    // var array = data.toString().split('\n');
+    // return callback(array);
+  //   fs.readFile(this.paths.list, 'utf8', callback(err, data));
   });
+
 };
 
 exports.downloadUrls = function(urls) {
