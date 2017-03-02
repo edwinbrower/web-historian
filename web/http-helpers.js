@@ -11,7 +11,7 @@ var headers = {
   'Content-Type': 'text/html'
 };
 
-exports.sendResponse = function(res, data, statusCode) {
+exports.sendResponse = function(res, data, statusCode) {  //was: res, data, statusCode
   var statusCode = statusCode || 200;
   res.writeHead(statusCode, headers);
   res.end(data); //original end - res.end(archive.paths.list)
@@ -25,6 +25,9 @@ exports.serveAssets = function(res, asset, callback) {
     }
     this.sendResponse(res, data); //res, data, statusCode
   });
+
+
+
               // fs.readFile(asset, (err, data) => {
               //   if (err) { throw err; }
               //   callback(data);

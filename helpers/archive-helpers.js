@@ -26,57 +26,98 @@ exports.initialize = function(pathsObj) {
 // modularize your code. Keep it clean!
 
 exports.readListOfUrls = function(callback) {
-  fs.readFile(this.paths.list, (err, data) => {
+  fs.readFile(exports.paths.list, (err, data) => {
     if (err) {
       throw err;
     }
     var array = data.toString().split('\n');
-    return callback(array);
+    callback(array);
   //   fs.readFile(this.paths.list, 'utf8', callback(err, data));
   });
-
-
 };
 
+
+
 exports.isUrlInList = function(url, callback) {
-  fs.readFile(this.paths.list, (err, data) => {
-    if (err) {
-      throw err;
-    }
-    var string = data.toString();
-    var result = string.includes(url.toString());
-    return callback(result);
+  // // we tried this earlier. it works. but it's not using the helper function that we just wrote #inefficient
+  // fs.readFile(exports.paths.list, (err, data) => {
+  //   if (err) {
+  //     throw err;
+  //   }
+  //   var string = data.toString();
+  //   var result = string.includes(url.toString());
+  //   callback(result);
+  // });
+  this.readListOfUrls(array => {
+    callback(_.includes(array, url.toString()));
   });
-  
-  // console.log('array', array);
-  // var string = array.join('\n');
-  // console.log('string', string);
-  // return string.includes(url);
-  // var array = this.paths.list.split('/n');
-  // return _.contains(array, callback(url));
 };
 
 exports.addUrlToList = function(url, callback) {
-  fs.appendFile(this.paths.list, url, (err) => {
+  fs.appendFile(exports.paths.list, url, (err) => {
     if (err) {
       throw err;
     }
     // callback(this.isUrlInList(url, _.indentity));
-    return callback(true);
-    console.log('The "data to append" was appended to file!');
+    callback(true);
   });  
 };
 
 exports.isUrlArchived = function(url, callback) {
-  fs.readdir( this.paths.archivedSites, (err, files) => {
+  fs.readdir( exports.paths.archivedSites, (err, files) => {
     if (err) {
       throw err;
     }
-    //files referes to an array of file names in archieve sites directory
+    //files refers to an array of file names in archieve sites directory
     var result = _.contains(files, url.toString());
-    return callback(result);
+    callback(result); // THIS SHOULD BE A BOOLEAN
   });
 };
 
 exports.downloadUrls = function(urls) {
+  // var helpMe = exports.isUrlArchived(urls[0], (bool) => { return bool; } );
+
+
+  //IMPORTANT: the url data will need to be changed to include the url DOM elements
+  _.each(urls, function(url) {  //when in a var it doesnt work though....why?
+    fs.writeFile( exports.paths.archivedSites + '/' + url, url, (err) => {
+      if (err) { 
+        throw err; 
+      }
+    });
+  });
+  //   exports.isUrlArchived(url, (bool) => {
+  //     if (bool) {
+  //       console.log('bool ', bool);
+  //       // return bool;  //why cant you though?
+  //       // shouldnt need to do something here
+  //     } else {
+  //       console.log('not', bool);
+        // code to download urls will go here
+        // thinking we will need to look at initialize here (or whatever created the files to archive in the tests)
+        // };
+   
+  // _.each(urls, function(url) {
+  //   // console.log('url is ', exports.isUrlArchived(url, _.identity)); // want it to be a bool
+  //   //if (!isUrlArchived(url))
+  // });
+  // console.log('dl after each url ', urls);
+// then check if !isUrlArchived 
+//   write something here to archive it. (new functionality is here)
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
