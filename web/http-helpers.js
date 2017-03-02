@@ -18,6 +18,13 @@ exports.sendResponse = function(res, data, statusCode) {
 };
 
 exports.serveAssets = function(res, asset, callback) {
+  var fileStr = archive.paths.siteAssets + asset;
+  fs.readFile(fileStr, 'utf8', (err, data) => { 
+    if (err) {
+      throw err;
+    }
+    this.sendResponse(res, data); //res, data, statusCode
+  });
               // fs.readFile(asset, (err, data) => {
               //   if (err) { throw err; }
               //   callback(data);
