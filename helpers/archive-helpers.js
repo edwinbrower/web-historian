@@ -31,12 +31,13 @@ exports.readListOfUrls = function(callback) {
       throw err;
     }
     var array = data.toString().split('\n');
+    if (callback === undefined) {
+      callback = _.identity;
+    }
     callback(array);
   //   fs.readFile(this.paths.list, 'utf8', callback(err, data));
   });
 };
-
-
 
 exports.isUrlInList = function(url, callback) {
   // // we tried this earlier. it works. but it's not using the helper function that we just wrote #inefficient
@@ -48,17 +49,24 @@ exports.isUrlInList = function(url, callback) {
   //   var result = string.includes(url.toString());
   //   callback(result);
   // });
-  this.readListOfUrls(array => {
-    callback(_.includes(array, url.toString()));
+  if (callback === undefined) {
+    callback = _.identity;
+  }
+  exports.readListOfUrls(array => {
+    callback(_.includes(array, url.toString()));  //THIS SHOULD BE A BOOLEAN
   });
 };
 
 exports.addUrlToList = function(url, callback) {
-  fs.appendFile(exports.paths.list, url, (err) => {
+  //NEED TO REVISIT, HAVE TO NEW LINE AFTER APPENDING 
+  fs.appendFile(exports.paths.list, url + '\n', 'utf8', (err) => {
     if (err) {
       throw err;
     }
     // callback(this.isUrlInList(url, _.indentity));
+    if (callback === undefined) {
+      callback = _.identity;
+    }    
     callback(true);
   });  
 };
@@ -70,6 +78,9 @@ exports.isUrlArchived = function(url, callback) {
     }
     //files refers to an array of file names in archieve sites directory
     var result = _.contains(files, url.toString());
+    if (callback === undefined) {
+      callback = _.identity;
+    }    
     callback(result); // THIS SHOULD BE A BOOLEAN
   });
 };
