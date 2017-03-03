@@ -23,9 +23,6 @@ exports.initialize = function(pathsObj) {
   });
 };
 
-// The following function names are provided to you to suggest how you might
-// modularize your code. Keep it clean!
-
 exports.readListOfUrls = function(callback) {
   fs.readFile(exports.paths.list, (err, data) => {
     if (err) {
@@ -36,41 +33,57 @@ exports.readListOfUrls = function(callback) {
       callback = _.identity;
     }
     callback(array);
-  //   fs.readFile(this.paths.list, 'utf8', callback(err, data));
   });
 };
+
 
 exports.isUrlInList = function(url, callback) {
-  // // we tried this earlier. it works. but it's not using the helper function that we just wrote #inefficient
-  // fs.readFile(exports.paths.list, (err, data) => {
-  //   if (err) {
-  //     throw err;
-  //   }
-  //   var string = data.toString();
-  //   var result = string.includes(url.toString());
-  //   callback(result);
-  // });
-  if (callback === undefined) {
-    callback = _.identity;
-  }
-  exports.readListOfUrls(array => {
-    callback(_.includes(array, url.toString()));  //THIS SHOULD BE A BOOLEAN
+  exports.readListOfUrls(function(sites) {
+    var found = _.any(sites, function(site, i) {
+      return site.match(url);
+    });
+    callback(found);
   });
 };
 
+
+// exports.isUrlInList = function(url, callback) {
+//   // // we tried this earlier. it works. but it's not using the helper function that we just wrote #inefficient
+//   // fs.readFile(exports.paths.list, (err, data) => {
+//   //   if (err) {
+//   //     throw err;
+//   //   }
+//   //   var string = data.toString();
+//   //   var result = string.includes(url.toString());
+//   //   callback(result);
+//   // });
+//   if (callback === undefined) {
+//     callback = _.identity;
+//   }
+//   exports.readListOfUrls(array => {
+//     callback(_.includes(array, url.toString()));  //THIS SHOULD BE A BOOLEAN
+//   });
+// };
+
+
 exports.addUrlToList = function(url, callback) {
-  //NEED TO REVISIT, HAVE TO NEW LINE AFTER APPENDING 
-  fs.appendFile(exports.paths.list, url + '\n', (err) => {
-    if (err) {
-      throw err;
-    }
-    // callback(this.isUrlInList(url, _.indentity));
-    if (callback === undefined) {
-      callback = _.identity;
-    }    
-    callback(true);
-  });  
+  fs.appendFile(exports.paths.list, url + '\n', function(err, file) {
+    callback();
+  });
 };
+
+// exports.addUrlToList = function(url, callback) {
+//   //NEED TO REVISIT, HAVE TO NEW LINE AFTER APPENDING 
+//   fs.appendFile(exports.paths.list, url + '\n', (err, file) => {
+//     // if (err) {
+//     //   throw err;
+//     // }
+//     if (callback === undefined) {
+//       callback = _.identity;
+//     }    
+//     callback();
+//   });  
+// };
 
 exports.isUrlArchived = function(url, callback) {
   fs.readdir( exports.paths.archivedSites, (err, files) => {
@@ -86,21 +99,6 @@ exports.isUrlArchived = function(url, callback) {
   });
 };
 
-// exports.downloadUrls = function(urls) {
-//   // var helpMe = exports.isUrlArchived(urls[0], (bool) => { return bool; } );
-
-
-//   //IMPORTANT: the url data will need to be changed to include the url DOM elements
-//   _.each(urls, function(url) {  //when in a var it doesnt work though....why?
-//     fs.writeFile( exports.paths.archivedSites + '/' + url, url, (err) => {
-//       if (err) { 
-//         throw err; 
-//       }
-//     });
-//   });
-// };
-
-
 exports.downloadUrls = function(urls) {
   // Iterate over urls and pipe to new files
   _.each(urls, function (url) {
@@ -108,39 +106,4 @@ exports.downloadUrls = function(urls) {
     request('http://' + url).pipe(fs.createWriteStream(exports.paths.archivedSites + '/' + url));
   });
 };
-
-  //   exports.isUrlArchived(url, (bool) => {
-  //     if (bool) {
-  //       console.log('bool ', bool);
-  //       // return bool;  //why cant you though?
-  //       // shouldnt need to do something here
-  //     } else {
-  //       console.log('not', bool);
-        // code to download urls will go here
-        // thinking we will need to look at initialize here (or whatever created the files to archive in the tests)
-        // };
-   
-  // _.each(urls, function(url) {
-  //   // console.log('url is ', exports.isUrlArchived(url, _.identity)); // want it to be a bool
-  //   //if (!isUrlArchived(url))
-  // });
-  // console.log('dl after each url ', urls);
-// then check if !isUrlArchived 
-//   write something here to archive it. (new functionality is here)
-//};
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

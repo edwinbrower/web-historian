@@ -36,8 +36,9 @@ var actions = {
             }
           });
         } else { // URL is NOT in the LIST
+          console.log(domainUrl);
           archive.addUrlToList(domainUrl, () => {
-            httpHelper.redirectResponse(res, '/loading.html', 302);
+            httpHelper.redirectResponse(res, '/loading.html', 302); // 302 here to pass the test
           });
         }
       });
