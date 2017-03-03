@@ -4,16 +4,8 @@ var archive = require('../helpers/archive-helpers');
 var httpHelper = require('./http-helpers');
 var url = require('url');
 
-// require more modules/folders here!
-
 var actions = {
   'GET': function(req, res) {
-    //THESE ARE THE SAME
-    // console.log('urlPath', urlPath);
-    // console.log('reqUrl', req.url);
-    // var myUrl = url.parse(req.url);
-    // var urlPath = myUrl.pathname;
-
     var parts = url.parse(req.url);
     var urlPath = parts.pathname;
     if ( urlPath === '/') {
@@ -25,63 +17,12 @@ var actions = {
         if (!bool) {
           httpHelper.send404(res);
         } else {
+        //URL IS IN THE LIST
           httpHelper.redirectResponse(res, '/loading.html');
         }
       });
     });
 
-
-
-    // //DOES URL NOT HAVE ROOT
-    // if (req.url !== '/') {
-    //   archive.isUrlInList(req.url, (bool) => { 
-    //     //URL IS NOT IN LIST
-    //     if (!bool) {
-    //       httpHelper.serveAssets(res, req.url);
-    //       // archive.addUrlToList(req.url);
-    //     }
-    //     // } else {
-        // //URL IS IN LIST
-        //   archive.isUrlArchived(req.url, (archiveBool)=>{
-        //     if (archiveBool) {
-        //     // Is also Archived
-        //       httpHelper.serveAssets(res, req.url);
-        //     } else {
-        //     // On list but NOT archived
-        //       httpHelper.serveAssets(res, req.url);
-        //       // send 404
-        //       // send loading
-        //     }
-    //     //   });
-    //     // }
-    //   });
-    // } else {
-    //   //SUBMIT RESPONSE WITH INDEX.HTML
-    //   httpHelper.serveAssets(res, '/index.html');
-    // }
-
-
-/// What we previously wrote that worked
-    // if (req.url !== '/') {
-    //   var fileStr = archive.paths.archivedSites + req.url;
-    //   fs.readFile(fileStr, 'utf8', (err, data) => { 
-    //     if (err) {
-    //       throw err;
-    //     }
-    //     httpHelper.sendResponse(res, data); //res, data, statusCode
-    //   }); 
-    // } else {
-    //   httpHelper.serveAssets(res, '/index.html');
-    // }
-
-
-    // var fileStr = archive.paths.archivedSites + req.url;
-    // fs.readFile(fileStr, 'utf8', (err, data) => { 
-    //   if (err) {
-    //     throw err;
-    //   }
-    //   httpHelper.sendResponse(res, data); //res, data, statusCode
-    // });
   },
   'POST': function(req, res) { 
     httpHelper.collectData(req, (info) => {
@@ -109,7 +50,4 @@ exports.handleRequest = function (req, res) {
   } else {
     httpHelper.send404(res);
   }
-
-
-  // res.end(archive.paths.list);
 };
