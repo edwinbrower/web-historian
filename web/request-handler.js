@@ -22,26 +22,28 @@ var actions = {
         }
       });
     });
-
   },
   'POST': function(req, res) { 
     httpHelper.collectData(req, (info) => {
-      var url = info.split('=')[1].replace('http://', '');
+      var domainUrl = info.split('=')[1]; //.replace('http://', '');
       archive.isUrlInList(url, bool => {
-        if (!bool) {
-          archive.addUrlToList(url);
-          httpHelper.sendResponse(res, 'Found', 302);
-        } else {
-          console.log('IM NOT SUPPOSED TO BE HERE');
+        if (bool) { //URL IS IN THE LIST
+          archive.isUrlArchived(domainUrl, (bool) => {
+            if (bool) { //URL IS ARCHIVED
+              httpHelper.redirectResponse(res, '/' + domainUrl);
+            } else { //URL IS NOT ARCHIVED
+              httpHelper.redirectResponse(res, '/loading.html');
+            }
+          });
+        } else { // URL is NOT in the LIST
+          archive.addUrlToList(domainUrl, () => {
+            httpHelper.redirectResponse(res, '/loading.html', 302);
+          });
         }
       });
     });
-  },
-  'OPTIONS': function(req, res) {
   }
 };
-
-
 
 exports.handleRequest = function (req, res) {
   var action = actions[req.method];
