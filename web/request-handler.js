@@ -14,32 +14,51 @@ var actions = {
     // var myUrl = url.parse(req.url);
     // var urlPath = myUrl.pathname;
 
-    //DOES URL NOT HAVE ROOT
-    if (req.url !== '/') {
-      archive.isUrlInList(req.url, (bool) => { 
+    var parts = url.parse(req.url);
+    var urlPath = parts.pathname;
+    if ( urlPath === '/') {
+      urlPath = '/index.html';
+    }
+    httpHelper.serveAssets(res, urlPath, () => {
+      archive.isUrlInList(urlPath.slice(1), (bool) => { 
         //URL IS NOT IN LIST
         if (!bool) {
-          httpHelper.serveAssets(res, req.url);
-          archive.addUrlToList(req.url);
+          httpHelper.send404(res);
         } else {
-        //URL IS IN LIST
-          archive.isUrlArchived(req.url, (archiveBool)=>{
-            if (archiveBool) {
-            // Is also Archived
-              httpHelper.serveAssets(res, req.url);
-            } else {
-            // On list but NOT archived
-              httpHelper.serveAssets(res, req.url);
-              // send 404
-              // send loading
-            }
-          });
+          httpHelper.redirectResponse(res, '/loading.html');
         }
       });
-    } else {
-      //SUBMIT RESPONSE WITH INDEX.HTML
-      httpHelper.serveAssets(res, '/index.html');
-    }
+    });
+
+
+
+    // //DOES URL NOT HAVE ROOT
+    // if (req.url !== '/') {
+    //   archive.isUrlInList(req.url, (bool) => { 
+    //     //URL IS NOT IN LIST
+    //     if (!bool) {
+    //       httpHelper.serveAssets(res, req.url);
+    //       // archive.addUrlToList(req.url);
+    //     }
+    //     // } else {
+        // //URL IS IN LIST
+        //   archive.isUrlArchived(req.url, (archiveBool)=>{
+        //     if (archiveBool) {
+        //     // Is also Archived
+        //       httpHelper.serveAssets(res, req.url);
+        //     } else {
+        //     // On list but NOT archived
+        //       httpHelper.serveAssets(res, req.url);
+        //       // send 404
+        //       // send loading
+        //     }
+    //     //   });
+    //     // }
+    //   });
+    // } else {
+    //   //SUBMIT RESPONSE WITH INDEX.HTML
+    //   httpHelper.serveAssets(res, '/index.html');
+    // }
 
 
 /// What we previously wrote that worked
@@ -88,7 +107,7 @@ exports.handleRequest = function (req, res) {
   if (action) {
     action(req, res);
   } else {
-    httpHelper.sendResponse(res, 'Not Found', 404);
+    httpHelper.send404(res);
   }
 
 

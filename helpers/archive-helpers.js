@@ -1,6 +1,7 @@
 var fs = require('fs');
 var path = require('path');
 var _ = require('underscore');
+var request = require('request');
 
 /*
  * You will need to reuse the same paths many times over in the course of this sprint.
@@ -59,7 +60,7 @@ exports.isUrlInList = function(url, callback) {
 
 exports.addUrlToList = function(url, callback) {
   //NEED TO REVISIT, HAVE TO NEW LINE AFTER APPENDING 
-  fs.appendFile(exports.paths.list, url + '\n', 'utf8', (err) => {
+  fs.appendFile(exports.paths.list, url + '\n', (err) => {
     if (err) {
       throw err;
     }
@@ -85,18 +86,29 @@ exports.isUrlArchived = function(url, callback) {
   });
 };
 
+// exports.downloadUrls = function(urls) {
+//   // var helpMe = exports.isUrlArchived(urls[0], (bool) => { return bool; } );
+
+
+//   //IMPORTANT: the url data will need to be changed to include the url DOM elements
+//   _.each(urls, function(url) {  //when in a var it doesnt work though....why?
+//     fs.writeFile( exports.paths.archivedSites + '/' + url, url, (err) => {
+//       if (err) { 
+//         throw err; 
+//       }
+//     });
+//   });
+// };
+
+
 exports.downloadUrls = function(urls) {
-  // var helpMe = exports.isUrlArchived(urls[0], (bool) => { return bool; } );
-
-
-  //IMPORTANT: the url data will need to be changed to include the url DOM elements
-  _.each(urls, function(url) {  //when in a var it doesnt work though....why?
-    fs.writeFile( exports.paths.archivedSites + '/' + url, url, (err) => {
-      if (err) { 
-        throw err; 
-      }
-    });
+  // Iterate over urls and pipe to new files
+  _.each(urls, function (url) {
+    if (!url) { return; }
+    request('http://' + url).pipe(fs.createWriteStream(exports.paths.archivedSites + '/' + url));
   });
+};
+
   //   exports.isUrlArchived(url, (bool) => {
   //     if (bool) {
   //       console.log('bool ', bool);
@@ -115,7 +127,7 @@ exports.downloadUrls = function(urls) {
   // console.log('dl after each url ', urls);
 // then check if !isUrlArchived 
 //   write something here to archive it. (new functionality is here)
-};
+//};
 
 
 
