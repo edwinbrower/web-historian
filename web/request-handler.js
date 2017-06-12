@@ -12,7 +12,10 @@ var actions = {
       urlPath = '/index.html';
     }
     httpHelper.serveAssets(res, urlPath, () => {
-      archive.isUrlInList(urlPath.slice(1), (bool) => { 
+      if (urlPath[0] === '/') { 
+        urlPath = urlPath.slice(1); 
+      }
+      archive.isUrlInList(urlPath, (bool) => { 
         //URL IS NOT IN LIST
         if (!bool) {
           httpHelper.send404(res);
@@ -25,8 +28,8 @@ var actions = {
   },
   'POST': function(req, res) { 
     httpHelper.collectData(req, (info) => {
-      var domainUrl = info.split('=')[1]; //.replace('http://', '');
-      archive.isUrlInList(url, bool => {
+      var domainUrl = info.split('=')[1].replace('http://', '');
+      archive.isUrlInList(domainUrl, bool => {     
         if (bool) { //URL IS IN THE LIST
           archive.isUrlArchived(domainUrl, (bool) => {
             if (bool) { //URL IS ARCHIVED
