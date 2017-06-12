@@ -21,11 +21,11 @@ exports.collectData = function(req, callback) {
 };
 
 exports.send404 = function(res) {
-  exports.sendResponse(res, 'Not Found', 404);
+  exports.sendResponse(res, '404: Page Not Found', 404);
 };
 
 exports.redirectResponse = function(res, location, statusCode) {
-  var statusCode = statusCode || 200;
+  var statusCode = statusCode || 302;
   res.writeHead(statusCode, {location: location});
   res.end();
 };
@@ -37,19 +37,24 @@ exports.sendResponse = function(res, data, statusCode) {
 };
 
 exports.serveAssets = function(res, asset, callback) {
-//IS IT IN THE PUBLIC FOLDER?
-  fs.readFile(archive.paths.siteAssets + asset, (err, data) => {
-    if (err) {
-      //IS IT IN THE ARCHIVED FOLDER?
-      fs.readFile(archive.paths.archivedSites + asset, (err, data) => { 
-        if (err) {
-          exports.send404(res);
+  var encoding = {encoding: 'utf8'};
+  fs.readFile(archive.paths.siteAssets + asset, encoding, (err, data) => {
+    // First see if it's in the public folder (index or loading pages)
+    if (err) { // Not in public folder
+      fs.readFile(archive.paths.archivedSites + asset, encoding, (err, data) => { 
+        // If it isn't in the public folder 
+        // Then check if it is in the Archive Folder
+        if (err) { // Not in Archive folder so add or wait more for cron
+          if (callback) {
+            callback();
+          } else {
+            exports.send404(res);
+          }
+        } else { //It is in the archive folder so display the contents.
+          exports.sendResponse(res, data);
         }
-        //IT DOES EXIST IN THE ARCHIVE FOLDER
-        exports.sendResponse(res, data);
       });
-    } else {
-      //IT DOES EXIST IN THE PUBLIC FOLDER
+    } else { // It is in public folder so send to that index / loading page.
       exports.sendResponse(res, data);
     }
   });
