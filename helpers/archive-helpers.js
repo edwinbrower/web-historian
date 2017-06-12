@@ -32,12 +32,8 @@ exports.readListOfUrls = function(callback) {
     if (callback) {
       callback(array);
     }
-    // if (callback === undefined) {
-    //   callback = _.identity;
-    // }
   });
 };
-
 
 exports.isUrlInList = function(url, callback) {
   exports.readListOfUrls(function(sites) {
@@ -48,45 +44,11 @@ exports.isUrlInList = function(url, callback) {
   });
 };
 
-
-// exports.isUrlInList = function(url, callback) {
-//   // // we tried this earlier. it works. but it's not using the helper function that we just wrote #inefficient
-//   // fs.readFile(exports.paths.list, (err, data) => {
-//   //   if (err) {
-//   //     throw err;
-//   //   }
-//   //   var string = data.toString();
-//   //   var result = string.includes(url.toString());
-//   //   callback(result);
-//   // });
-//   if (callback === undefined) {
-//     callback = _.identity;
-//   }
-//   exports.readListOfUrls(array => {
-//     callback(_.includes(array, url.toString()));  //THIS SHOULD BE A BOOLEAN
-//   });
-// };
-
-
 exports.addUrlToList = function(url, callback) {
   fs.appendFile(exports.paths.list, url + '\n', function(err, file) {
     callback();
   });
 };
-
-// exports.addUrlToList = function(url, callback) {
-//   //NEED TO REVISIT, HAVE TO NEW LINE AFTER APPENDING 
-//   fs.appendFile(exports.paths.list, url + '\n', (err, file) => {
-//     // if (err) {
-//     //   throw err;
-//     // }
-//     if (callback === undefined) {
-//       callback = _.identity;
-//     }    
-//     callback();
-//   });  
-// };
-
 
 exports.isUrlArchived = function(url, callback) {
   var sitePath = path.join(exports.paths.archivedSites, url);
@@ -95,19 +57,6 @@ exports.isUrlArchived = function(url, callback) {
     callback(exists);
   });
 };
-// exports.isUrlArchived = function(url, callback) {
-//   fs.readdir( exports.paths.archivedSites, (err, files) => {
-//     if (err) {
-//       throw err;
-//     }
-//     //files refers to an array of file names in archieve sites directory
-//     var result = _.contains(files, url.toString());
-//     if (callback === undefined) {
-//       callback = _.identity;
-//     }    
-//     callback(result); // THIS SHOULD BE A BOOLEAN
-//   });
-// };
 
 exports.downloadUrls = function(urls) {
   _.each(urls, function (url) {
@@ -120,4 +69,3 @@ exports.downloadUrls = function(urls) {
 // Enter in terminal 
 // crontab -e  (to start)
 // */1 * * * * /usr/local/bin/node /Users/edwinbrower/Documents/HackReactor/Sprints/hrsf72-web-historian/workers/htmlfetcher.js
-
