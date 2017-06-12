@@ -16,11 +16,9 @@ var actions = {
         urlPath = urlPath.slice(1); 
       }
       archive.isUrlInList(urlPath, (bool) => { 
-        //URL IS NOT IN LIST
-        if (!bool) {
+        if (!bool) { //URL IS NOT IN LIST
           httpHelper.send404(res);
-        } else {
-        //URL IS IN THE LIST
+        } else { //URL IS IN THE LIST
           httpHelper.redirectResponse(res, '/loading.html');
         }
       });
@@ -38,7 +36,7 @@ var actions = {
               httpHelper.redirectResponse(res, '/loading.html');
             }
           });
-        } else { // URL is NOT in the LIST
+        } else { // URL IS NOT IN THE LIST
           console.log(domainUrl);
           archive.addUrlToList(domainUrl, () => {
             httpHelper.redirectResponse(res, '/loading.html', 302); // 302 here to pass the test
