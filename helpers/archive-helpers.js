@@ -29,10 +29,12 @@ exports.readListOfUrls = function(callback) {
       throw err;
     }
     var array = data.toString().split('\n');
-    if (callback === undefined) {
-      callback = _.identity;
+    if (callback) {
+      callback(array);
     }
-    callback(array);
+    // if (callback === undefined) {
+    //   callback = _.identity;
+    // }
   });
 };
 
@@ -85,25 +87,37 @@ exports.addUrlToList = function(url, callback) {
 //   });  
 // };
 
+
 exports.isUrlArchived = function(url, callback) {
-  fs.readdir( exports.paths.archivedSites, (err, files) => {
-    if (err) {
-      throw err;
-    }
-    //files refers to an array of file names in archieve sites directory
-    var result = _.contains(files, url.toString());
-    if (callback === undefined) {
-      callback = _.identity;
-    }    
-    callback(result); // THIS SHOULD BE A BOOLEAN
+  var sitePath = path.join(exports.paths.archivedSites, url);
+
+  fs.exists(sitePath, function(exists) {
+    callback(exists);
   });
 };
+// exports.isUrlArchived = function(url, callback) {
+//   fs.readdir( exports.paths.archivedSites, (err, files) => {
+//     if (err) {
+//       throw err;
+//     }
+//     //files refers to an array of file names in archieve sites directory
+//     var result = _.contains(files, url.toString());
+//     if (callback === undefined) {
+//       callback = _.identity;
+//     }    
+//     callback(result); // THIS SHOULD BE A BOOLEAN
+//   });
+// };
 
 exports.downloadUrls = function(urls) {
-  // Iterate over urls and pipe to new files
   _.each(urls, function (url) {
     if (!url) { return; }
     request('http://' + url).pipe(fs.createWriteStream(exports.paths.archivedSites + '/' + url));
   });
 };
+
+
+// Enter in terminal 
+// crontab -e  (to start)
+// */1 * * * * /usr/local/bin/node /Users/edwinbrower/Documents/HackReactor/Sprints/hrsf72-web-historian/workers/htmlfetcher.js
 
